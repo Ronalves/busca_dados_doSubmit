@@ -1,0 +1,28 @@
+FORM seleciona_dados .
+
+  cl_salv_bs_runtime_info=>set(
+  display = abap_false
+  metadata = abap_false
+  data = abap_true ).
+
+  SUBMIT rfitemgl USING SELECTION-SCREEN 1000   WITH sd_saknr IN sd_saknr
+                                                WITH sd_bukrs IN sd_bukrs
+                                                WITH pa_stida EQ pa_stida
+                                                WITH x_norm   EQ abap_true
+                                                AND RETURN.
+
+  TRY.
+      cl_salv_bs_runtime_info=>get_data_ref( IMPORTING r_data = gfs_zficag ).
+      ASSIGN gfs_zficag->* TO <gft_zficag>.
+
+    CATCH cx_root.
+      MESSAGE text-001 TYPE c_e.
+  ENDTRY.
+
+  cl_salv_bs_runtime_info=>clear_all( ).
+
+
+
+  IF <gft_zficag> IS ASSIGNED.
+
+    LOOP AT <gft_zficag> ASSIGNING <gfs_zficag>.
